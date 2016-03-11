@@ -19,3 +19,11 @@ class SpeedTest():
             return self
 
 data=SpeedTest().doSpeedTest()
+
+#TODO Query data (DONE)
+
+#TODO Save data to SQLlite
+#TODO Create DB w/ sqlalchemy
+
+#TODO Email Report
+#TODO Pretty text table module for presentation
