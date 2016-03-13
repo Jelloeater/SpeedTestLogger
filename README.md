@@ -1,5 +1,6 @@
 ## SpeedTestLogger
 pip install speedtest-cli
+pip install sqlalchemy
 python run.py
 
 ## Credits

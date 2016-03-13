@@ -5,6 +5,8 @@ __author__ = 'jesse'
 class SpeedTest():
     def doSpeedTest(self):
             result = os.popen("/usr/local/bin/speedtest-cli --simple").read()
+            # TODO Add switch for different OS versions
+
             if 'Cannot' in result:
                 return { 'date': datetime.now(), 'uploadResult': 0, 'downloadResult': 0, 'ping': 0 }
 
@@ -19,8 +21,6 @@ class SpeedTest():
             return self
 
 data=SpeedTest().doSpeedTest()
-
-#TODO Query data (DONE)
 
 #TODO Save data to SQLlite
 #TODO Create DB w/ sqlalchemy
