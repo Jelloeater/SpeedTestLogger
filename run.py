@@ -3,6 +3,7 @@ from datetime import datetime
 import logging
 import os
 import speedtest_cli
+import database
 
 print(speedtest_cli.__file__)
 
@@ -25,7 +26,11 @@ def main():
                             format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
                             level=logging.WARNING)
 
+    database.Setup.setup_sql_environment()
+    database.Setup.create_tables()
     data = SpeedTest().doSpeedTest()
+    logging.debug(data)
+    pass
 
     # TODO Save data to SQLlite
     # TODO Create DB w/ sqlalchemy
@@ -36,8 +41,7 @@ def main():
 
 class SpeedTest():
     def doSpeedTest(self):
-        logging.debug(speedtest_cli.__file__)
-        result = os.popen("/usr/local/bin/speedtest-cli --simple").read()
+        result = os.popen(str(speedtest_cli.__file__) + " --simple").read()
 
         if 'Cannot' in result:
             return {'date': datetime.now(), 'uploadResult': 0, 'downloadResult': 0, 'ping': 0}
