@@ -53,6 +53,8 @@ class Setup:
         else:
             print('Skipping database re-initialization')
 
+            #FIXME Getting double input then freeze
+
 
 # Classes are directly mapped to tables, without the need for a mapper binding (ex mapper(Class, table_definition))
 class SpeedTestData(BASE):
