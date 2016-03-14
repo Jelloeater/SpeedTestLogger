@@ -2,6 +2,19 @@ from datetime import datetime
 import os
 
 __author__ = 'jesse'
+
+def detectOS():
+    from sys import platform as _platform
+    if _platform == "linux" or _platform == "linux2":
+        pass
+    # linux
+    elif _platform == "darwin":
+        pass
+    # MAC OS X
+    elif _platform == "win32":
+        pass
+    # Windows
+
 class SpeedTest():
     def doSpeedTest(self):
             result = os.popen("/usr/local/bin/speedtest-cli --simple").read()
