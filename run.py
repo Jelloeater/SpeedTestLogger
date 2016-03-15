@@ -18,15 +18,24 @@ def main():
                         action="store_true",
                         help="Debug Mode Logging")
 
-    parser.add_argument('-g',"--getspeed",
+    parser.add_argument('-g', "--getspeed",
                         action="store_true",
                         help="Test and Log Speed")
 
-    parser.add_argument('-s',"--sendspeed",
+
+
+    sendspeed = parser.add_argument_group('E-mail Config')
+    sendspeed.add_argument('-s', "--sendspeed",
                         action="store_true",
                         help="Send Speed Report")
+    # FIXME Need to made secondary args required
+    sendspeed.add_argument("-from_email",
+                        action="store_string")
 
-    args = parser.parse_args()
+    sendspeed.add_argument("-to_email",
+                        action="store_true")
+
+
     if args.debug:
         logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
                             level=logging.DEBUG)
@@ -42,12 +51,9 @@ def main():
         database.SpeedTestData.put_data(speed_data)
 
     if args.sendspeed:
-        SendSpeedTest.getTable()
+        SendSpeedTest.sendEmail()
         # TODO Email Report
 
-    if len(sys.argv) == 1:  # Displays help and lists servers (to help first time users)
-        parser.print_help()
-        sys.exit(1)
 
 class SendSpeedTest():
     @staticmethod
@@ -57,26 +63,26 @@ class SendSpeedTest():
         x.field_names = ('Timestamp', 'Upload', 'Download', 'Ping')
         data = database.SpeedTestData.get_x_days(1)
         for i in data:
-            x.add_row([i.timestamp,i.up_speed,i.down_speed,i.ping])
+            x.add_row([i.timestamp, i.up_speed, i.down_speed, i.ping])
         return x
 
     @staticmethod
-    def sendEmail(smtpserver):
+    def sendEmail(send, receive, SMTP_server):
         import smtplib
         from email import MIMEMultipart
         from email import MIMEText
 
         msg = MIMEMultipart()
-        msg['From'] = 'me@gmail.com'
-        msg['To'] = 'you@gmail.com'
-        msg['Subject'] = 'simple email in python'
-        message = 'here is the email'
+        msg['From'] = send
+        msg['To'] = receive
+        msg['Subject'] = 'Speed Test Report'
+        message = SendSpeedTest.getTable()
         msg.attach(MIMEText(message))
 
-        mailserver = smtplib.SMTP(smtpserver)
+        mailserver = smtplib.SMTP(SMTP_server)
         # identify ourselves to smtp client
         mailserver.ehlo()
-        mailserver.sendmail(msg['From'],msg['To'],msg.as_string())
+        mailserver.sendmail(msg['From'], msg['To'], msg.as_string())
         mailserver.quit()
 
 
@@ -97,6 +103,7 @@ class GetSpeedTest():
         self.downloadResult = float(downloadResult.replace('Download: ', '').replace(' Mbit/s', ''))
         self.uploadResult = float(uploadResult.replace('Upload: ', '').replace(' Mbit/s', ''))
         return self
+
 
 if __name__ == "__main__":
     main()
