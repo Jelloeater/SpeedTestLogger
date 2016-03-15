@@ -34,11 +34,13 @@ def main():
 
 
 def getTable():
-    # TODO Pretty text table module for presentation
     from prettytable import PrettyTable
     x = PrettyTable()
     x.field_names = ('Timestamp', 'Upload', 'Download', 'Ping')
-    database.SpeedTestData.get_x_days(1)
+    data = database.SpeedTestData.get_x_days(1)
+    for i in data:
+        x.add_row([i.timestamp,i.up_speed,i.down_speed,i.ping])
+    return x
 
 
 class SpeedTest():
