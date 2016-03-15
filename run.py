@@ -3,6 +3,7 @@ from datetime import datetime
 import logging
 import os
 import speedtest_cli
+import sys
 import database
 
 print(speedtest_cli.__file__)
@@ -16,6 +17,15 @@ def main():
     parser.add_argument("--debug",
                         action="store_true",
                         help="Debug Mode Logging")
+
+    parser.add_argument('-g',"--getspeed",
+                        action="store_true",
+                        help="Test and Log Speed")
+
+    parser.add_argument('-s',"--sendspeed",
+                        action="store_true",
+                        help="Send Speed Report")
+
     args = parser.parse_args()
     if args.debug:
         logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
@@ -26,11 +36,18 @@ def main():
                             format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
                             level=logging.WARNING)
 
-    database.Setup.setup_sql_environment()
-    # speed_data = GetSpeedTest().doSpeedTest()
-    # database.SpeedTestData.put_data(speed_data)
-    SendSpeedTest.getTable()
-    # TODO Email Report
+    if args.getspeed:
+        database.Setup.setup_sql_environment()
+        speed_data = GetSpeedTest().doSpeedTest()
+        database.SpeedTestData.put_data(speed_data)
+
+    if args.sendspeed:
+        SendSpeedTest.getTable()
+        # TODO Email Report
+
+    if len(sys.argv) == 1:  # Displays help and lists servers (to help first time users)
+        parser.print_help()
+        sys.exit(1)
 
 class SendSpeedTest():
     @staticmethod
