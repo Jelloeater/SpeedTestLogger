@@ -27,11 +27,18 @@ def main():
                             level=logging.WARNING)
 
     database.Setup.setup_sql_environment()
-    speed_data = SpeedTest().doSpeedTest()
-    database.SpeedTestData.put_data(speed_data)
-
+    # speed_data = SpeedTest().doSpeedTest()
+    # database.SpeedTestData.put_data(speed_data)
+    getTable()
     # TODO Email Report
+
+
+def getTable():
     # TODO Pretty text table module for presentation
+    from prettytable import PrettyTable
+    x = PrettyTable()
+    x.field_names = ('Timestamp', 'Upload', 'Download', 'Ping')
+    database.SpeedTestData.get_x_days(1)
 
 
 class SpeedTest():

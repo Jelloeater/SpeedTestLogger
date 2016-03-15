@@ -68,6 +68,13 @@ class SpeedTestData(BASE):
     def get_all_data():
         session = get_session()
         return session.query(SpeedTestData).all()
+    @staticmethod
+    def get_x_days(num_of_days):
+        session = get_session()
+        end_date = datetime.datetime.now()
+        start_date = end_date - datetime.timedelta(days=num_of_days)
+        return session.query(SpeedTestData).filter(
+            SpeedTestData.timestamp.between(start_date, end_date)).all()
 
     @staticmethod
     def put_data(speed_data):

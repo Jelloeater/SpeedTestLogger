@@ -1,6 +1,7 @@
 ## SpeedTestLogger
 pip install speedtest-cli
 pip install sqlalchemy
+pip install PrettyTable
 python run.py
 
 ## Credits
