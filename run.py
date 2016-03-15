@@ -27,23 +27,43 @@ def main():
                             level=logging.WARNING)
 
     database.Setup.setup_sql_environment()
-    # speed_data = SpeedTest().doSpeedTest()
+    # speed_data = GetSpeedTest().doSpeedTest()
     # database.SpeedTestData.put_data(speed_data)
-    getTable()
+    SendSpeedTest.getTable()
     # TODO Email Report
 
+class SendSpeedTest():
+    @staticmethod
+    def getTable():
+        from prettytable import PrettyTable
+        x = PrettyTable()
+        x.field_names = ('Timestamp', 'Upload', 'Download', 'Ping')
+        data = database.SpeedTestData.get_x_days(1)
+        for i in data:
+            x.add_row([i.timestamp,i.up_speed,i.down_speed,i.ping])
+        return x
 
-def getTable():
-    from prettytable import PrettyTable
-    x = PrettyTable()
-    x.field_names = ('Timestamp', 'Upload', 'Download', 'Ping')
-    data = database.SpeedTestData.get_x_days(1)
-    for i in data:
-        x.add_row([i.timestamp,i.up_speed,i.down_speed,i.ping])
-    return x
+    @staticmethod
+    def sendEmail(smtpserver):
+        import smtplib
+        from email import MIMEMultipart
+        from email import MIMEText
+
+        msg = MIMEMultipart()
+        msg['From'] = 'me@gmail.com'
+        msg['To'] = 'you@gmail.com'
+        msg['Subject'] = 'simple email in python'
+        message = 'here is the email'
+        msg.attach(MIMEText(message))
+
+        mailserver = smtplib.SMTP(smtpserver)
+        # identify ourselves to smtp client
+        mailserver.ehlo()
+        mailserver.sendmail(msg['From'],msg['To'],msg.as_string())
+        mailserver.quit()
 
 
-class SpeedTest():
+class GetSpeedTest():
     def doSpeedTest(self):
         path = 'python ' + str(speedtest_cli.__file__) + " --simple"
         result = os.popen(path).read()
