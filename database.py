@@ -1,4 +1,5 @@
 import os
+import datetime
 
 __author__ = 'jesse'
 from sqlalchemy.orm import sessionmaker
@@ -13,7 +14,7 @@ from sqlalchemy.orm import sessionmaker
 # http://docs.sqlalchemy.org/en/rel_0_9/core/tutorial.html
 
 # NOTE This is only to be used with pure SQLalchemy, not FAB
-from sqlalchemy import Column, Integer, String, TIMESTAMP
+from sqlalchemy import Column, Integer, String, TIMESTAMP, Float, FLOAT, INTEGER
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -45,29 +46,36 @@ class Setup:
     @staticmethod
     def create_tables():
         engine = get_engine()
-        print('Are you sure to want to DROP ALL TABLES, this cannot be undone!')
-        if raw_input('({0})>'.format('Type YES to continue')) == 'YES':
+        if not os.path.isfile('SpeedData.db'):
             BASE.metadata.drop_all(engine)
             BASE.metadata.create_all(engine)
-            print('DATABASE RE-INITIALIZED')
+            logging.info('DATABASE INITIALIZED')
         else:
-            print('Skipping database re-initialization')
-
-            #FIXME Getting double input then freeze
-
+            logging.info('DATABASE PRESENT')
 
 # Classes are directly mapped to tables, without the need for a mapper binding (ex mapper(Class, table_definition))
 class SpeedTestData(BASE):
     """Defines Device object relational model, is used for both table creation and object interaction"""
     __tablename__ = 'SpeedTestData'
-    item_id = Column('item_id', Integer, primary_key=True)
+    item_id = Column('item_id', INTEGER, primary_key=True)
     timestamp = Column('timestamp', TIMESTAMP, nullable=False)
-    up_speed = Column('up_speed', String, nullable=False)
-    down_speed = Column('down_speed', String, nullable=False)
-    ping = Column('ping', String, nullable=False)
+    up_speed = Column('up_speed', FLOAT, nullable=False)
+    down_speed = Column('down_speed', FLOAT, nullable=False)
+    ping = Column('ping', FLOAT, nullable=False)
 
     # Helper methods
     @staticmethod
-    def get_data():
+    def get_all_data():
         session = get_session()
         return session.query(SpeedTestData).all()
+
+    @staticmethod
+    def put_data(speed_data):
+        data = SpeedTestData()
+        data.timestamp = datetime.datetime.now()
+        data.up_speed = speed_data.uploadResult
+        data.down_speed = speed_data.downloadResult
+        data.ping = speed_data.pingResult
+        s =get_session()
+        s.add(data)
+        s.commit()

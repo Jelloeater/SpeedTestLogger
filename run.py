@@ -27,13 +27,8 @@ def main():
                             level=logging.WARNING)
 
     database.Setup.setup_sql_environment()
-    database.Setup.create_tables()
-    data = SpeedTest().doSpeedTest()
-    logging.debug(data)
-    pass
-
-    # TODO Save data to SQLlite
-    # TODO Create DB w/ sqlalchemy
+    speed_data = SpeedTest().doSpeedTest()
+    database.SpeedTestData.put_data(speed_data)
 
     # TODO Email Report
     # TODO Pretty text table module for presentation
@@ -41,7 +36,8 @@ def main():
 
 class SpeedTest():
     def doSpeedTest(self):
-        result = os.popen(str(speedtest_cli.__file__) + " --simple").read()
+        path = 'python ' + str(speedtest_cli.__file__) + " --simple"
+        result = os.popen(path).read()
 
         if 'Cannot' in result:
             return {'date': datetime.now(), 'uploadResult': 0, 'downloadResult': 0, 'ping': 0}
