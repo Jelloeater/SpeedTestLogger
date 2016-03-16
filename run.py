@@ -2,11 +2,10 @@ import argparse
 from datetime import datetime
 import logging
 import os
-import speedtest_cli
-import sys
-import database
 
-print(speedtest_cli.__file__)
+import speedtest_cli
+
+import database
 
 __author__ = 'jesse'
 
@@ -18,24 +17,20 @@ def main():
                         action="store_true",
                         help="Debug Mode Logging")
 
-    parser.add_argument('-g', "--getspeed",
+    parser.add_argument('-g',"--getspeed",
                         action="store_true",
                         help="Test and Log Speed")
 
-
-
     sendspeed = parser.add_argument_group('E-mail Config')
     sendspeed.add_argument('-s', "--sendspeed",
-                        action="store_true",
-                        help="Send Speed Report")
+                           action="store_true",
+                           help="Send Speed Report")
     # FIXME Need to made secondary args required
-    sendspeed.add_argument("-from_email",
-                        action="store_string")
+    sendspeed.add_argument("-from_email")
+    sendspeed.add_argument("-to_email")
+    sendspeed.add_argument("-smtp_server")
 
-    sendspeed.add_argument("-to_email",
-                        action="store_true")
-
-
+    args = parser.parse_args()
     if args.debug:
         logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
                             level=logging.DEBUG)
@@ -51,7 +46,7 @@ def main():
         database.SpeedTestData.put_data(speed_data)
 
     if args.sendspeed:
-        SendSpeedTest.sendEmail()
+        SendSpeedTest.sendEmail(args.from_email, args.to_email, args.smtp_server)
         # TODO Email Report
 
 
