@@ -1,5 +1,6 @@
 import argparse
 from datetime import datetime
+import email
 import logging
 import os
 
@@ -46,8 +47,7 @@ def main():
         database.SpeedTestData.put_data(speed_data)
 
     if args.sendspeed:
-        SendSpeedTest.sendEmail(args.from_email, args.to_email, args.smtp_server)
-        # TODO Email Report
+        SendSpeedTest.sendEmail(args.from_email, args.to_email, args.smtp_server, args.debug)
 
 
 class SendSpeedTest():
@@ -62,23 +62,24 @@ class SendSpeedTest():
         return x
 
     @staticmethod
-    def sendEmail(send, receive, SMTP_server):
+    def sendEmail(sender, receive, SMTP_server, args_debug):
         import smtplib
-        from email import MIMEMultipart
-        from email import MIMEText
+        import email.utils
+        from email.mime.text import MIMEText
 
-        msg = MIMEMultipart()
-        msg['From'] = send
-        msg['To'] = receive
+        # Create the message
+        msg = MIMEText(str(SendSpeedTest.getTable()))
+        msg['To'] = email.utils.formataddr(('Recipient', receive))
+        msg['From'] = email.utils.formataddr(('Author', sender))
         msg['Subject'] = 'Speed Test Report'
-        message = SendSpeedTest.getTable()
-        msg.attach(MIMEText(message))
 
-        mailserver = smtplib.SMTP(SMTP_server)
-        # identify ourselves to smtp client
-        mailserver.ehlo()
-        mailserver.sendmail(msg['From'], msg['To'], msg.as_string())
-        mailserver.quit()
+        server = smtplib.SMTP(SMTP_server)
+        if args_debug:
+            server.set_debuglevel(True) # show communication with the server
+        try:
+            server.sendmail(msg['From'], msg['To'], msg.as_string())
+        finally:
+            server.quit()
 
 
 class GetSpeedTest():
