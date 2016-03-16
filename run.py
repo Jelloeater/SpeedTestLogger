@@ -18,15 +18,16 @@ def main():
                         action="store_true",
                         help="Debug Mode Logging")
 
-    parser.add_argument('-g',"--getspeed",
-                        action="store_true",
-                        help="Test and Log Speed")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('-g', "--getspeed",
+                      action="store_true",
+                      help="Test and Log Speed")
+
+    mode.add_argument('-s', "--sendspeed",
+                      action="store_true",
+                      help="Send Speed Report")
 
     sendspeed = parser.add_argument_group('E-mail Config')
-    sendspeed.add_argument('-s', "--sendspeed",
-                           action="store_true",
-                           help="Send Speed Report")
-    # FIXME Need to made secondary args required
     sendspeed.add_argument("-from_email")
     sendspeed.add_argument("-to_email")
     sendspeed.add_argument("-smtp_server")
@@ -47,19 +48,36 @@ def main():
         database.SpeedTestData.put_data(speed_data)
 
     if args.sendspeed:
-        SendSpeedTest.sendEmail(args.from_email, args.to_email, args.smtp_server, args.debug)
+        if args.from_email and args.to_email and args.smtp_server:
+            SendSpeedTest.sendEmail(args.from_email, args.to_email, args.smtp_server, args.debug)
+        else:
+            print('Missing all arguments')
 
 
-class SendSpeedTest():
+class SendSpeedTest:
+    def __init__(self):
+        pass
+
     @staticmethod
-    def getTable():
+    def getTable(num_of_days=7):
         from prettytable import PrettyTable
         x = PrettyTable()
         x.field_names = ('Timestamp', 'Upload', 'Download', 'Ping')
-        data = database.SpeedTestData.get_x_days(1)
+        data = database.SpeedTestData.get_x_days(num_of_days)
         for i in data:
-            x.add_row([i.timestamp, i.up_speed, i.down_speed, i.ping])
+            x.add_row([str(i.timestamp).split('.')[0], i.up_speed, i.down_speed, str(int(i.ping))])
         return x
+
+    @staticmethod
+    def getAverageData(num_of_days=7):
+        data = database.SpeedTestData.get_x_days(num_of_days)
+        for i in data:
+            logging.debug(data)
+        d = type('', (object,), {})() # Create dummy object
+        # TODO Create average method
+        d.up = 0
+        print(d.up)
+        return d
 
     @staticmethod
     def sendEmail(sender, receive, SMTP_server, args_debug):
@@ -71,18 +89,24 @@ class SendSpeedTest():
         msg = MIMEText(str(SendSpeedTest.getTable()))
         msg['To'] = email.utils.formataddr(('Recipient', receive))
         msg['From'] = email.utils.formataddr(('Author', sender))
-        msg['Subject'] = 'Speed Test Report'
+        d = SendSpeedTest.getAverageData()
+        msg['Subject'] = 'Speed Test' + d.up + d.down + d.ping
 
         server = smtplib.SMTP(SMTP_server)
         if args_debug:
-            server.set_debuglevel(True) # show communication with the server
+            server.set_debuglevel(True)  # show communication with the server
         try:
             server.sendmail(msg['From'], msg['To'], msg.as_string())
         finally:
             server.quit()
 
 
-class GetSpeedTest():
+class GetSpeedTest:
+    def __init__(self):
+        self.pingResult = None
+        self.downloadResult = None
+        self.uploadResult = None
+
     def doSpeedTest(self):
         path = 'python ' + str(speedtest_cli.__file__) + " --simple"
         result = os.popen(path).read()
