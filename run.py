@@ -71,13 +71,19 @@ class SendSpeedTest:
     @staticmethod
     def getAverageData(num_of_days=7):
         data = database.SpeedTestData.get_x_days(num_of_days)
+        avg = type('', (object,), {})()  # Create dummy object
+        avg.up_speed = 0
+        avg.down_speed = 0
+        avg.ping = 0
         for i in data:
-            logging.debug(data)
-        d = type('', (object,), {})() # Create dummy object
-        # TODO Create average method
-        d.up = 0
-        print(d.up)
-        return d
+            logging.debug(i.__dict__)
+            avg.up_speed = i.up_speed + avg.up_speed
+            avg.down_speed = i.down_speed + avg.down_speed
+            avg.ping = i.ping + avg.ping
+        avg.up_speed /= len(data)
+        avg.down_speed /= len(data)
+        avg.ping /= len(data)
+        return avg
 
     @staticmethod
     def sendEmail(sender, receive, SMTP_server, args_debug):
@@ -90,7 +96,7 @@ class SendSpeedTest:
         msg['To'] = email.utils.formataddr(('Recipient', receive))
         msg['From'] = email.utils.formataddr(('Author', sender))
         d = SendSpeedTest.getAverageData()
-        msg['Subject'] = 'Speed Test' + d.up + d.down + d.ping
+        msg['Subject'] = 'Speed Test | Avg Down: ' + str(d.down_speed) + ' | Up: ' + str(d.up_speed) + ' | Ping: ' + str(d.ping)
 
         server = smtplib.SMTP(SMTP_server)
         if args_debug:
