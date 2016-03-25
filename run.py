@@ -115,6 +115,7 @@ class GetSpeedTest:
 
     def doSpeedTest(self):
         path = 'python ' + str(speedtest_cli.__file__) + " --simple"
+        #FIXME Looks like cross plat code is not generating a correct path for exec
         result = os.popen(path).read()
 
         if 'Cannot' in result:
