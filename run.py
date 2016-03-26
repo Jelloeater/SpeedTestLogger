@@ -5,6 +5,7 @@ import logging
 import os
 
 import speedtest_cli
+import sys
 
 import database
 
@@ -37,6 +38,7 @@ def main():
         logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
                             level=logging.DEBUG)
         logging.debug('Debug Mode Enabled')
+        logging.debug(sys.path)
     else:
         logging.basicConfig(filename=LOG_FILENAME,
                             format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
@@ -114,8 +116,8 @@ class GetSpeedTest:
         self.uploadResult = None
 
     def doSpeedTest(self):
-        path = 'python ' + str(speedtest_cli.__file__) + " --simple"
-        #FIXME Looks like cross plat code is not generating a correct path for exec
+        path = str(sys.executable)+ ' ' + str(speedtest_cli.__file__) + " --simple"
+        logging.debug(path)
         result = os.popen(path).read()
 
         if 'Cannot' in result:
