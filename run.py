@@ -50,6 +50,7 @@ def main():
         database.SpeedTestData.put_data(speed_data)
 
     if args.sendspeed:
+        # SendSpeedTest.sendEmail(None,None,None,True) # DEBUG TEST
         if args.from_email and args.to_email and args.smtp_server:
             SendSpeedTest.sendEmail(args.from_email, args.to_email, args.smtp_server, args.debug)
         else:
@@ -68,6 +69,7 @@ class SendSpeedTest:
         data = database.SpeedTestData.get_x_days(num_of_days)
         for i in data:
             x.add_row([str(i.timestamp).split('.')[0], i.up_speed, i.down_speed, str(int(i.ping))])
+        logging.debug('\n' + str(x) + '\n')
         return x
 
     @staticmethod

@@ -75,6 +75,7 @@ class SpeedTestData(BASE):
         data.up_speed = speed_data.uploadResult
         data.down_speed = speed_data.downloadResult
         data.ping = (speed_data.pingResult)
+        logging.debug(data.__dict__)
         s = get_session()
         s.add(data)
         s.commit()
