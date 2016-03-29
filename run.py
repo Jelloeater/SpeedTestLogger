@@ -35,13 +35,15 @@ def main():
 
     args = parser.parse_args()
     if args.debug:
-        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
+        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
+                                   "(%(filename)s:%(lineno)s)",
                             level=logging.DEBUG)
         logging.debug('Debug Mode Enabled')
         logging.debug(sys.path)
     else:
         logging.basicConfig(filename=LOG_FILENAME,
-                            format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
+                            format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
+                                   "(%(filename)s:%(lineno)s)",
                             level=logging.WARNING)
 
     if args.getspeed:
@@ -100,7 +102,8 @@ class SendSpeedTest:
         msg['To'] = email.utils.formataddr(('Recipient', receive))
         msg['From'] = email.utils.formataddr(('Author', sender))
         d = SendSpeedTest.getAverageData()
-        msg['Subject'] = 'Speed Test | Avg Down: ' + str(d.down_speed) + ' | Up: ' + str(d.up_speed) + ' | Ping: ' + str(d.ping)
+        msg['Subject'] = 'Speed Test | Avg Down: ' + str(d.down_speed) + ' | Up: ' \
+                         + str(d.up_speed) + ' | Ping: ' + str(d.ping)
 
         server = smtplib.SMTP(SMTP_server)
         if args_debug:

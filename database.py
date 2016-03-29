@@ -44,9 +44,11 @@ class Setup:
             logging.info('DATABASE PRESENT')
 
 
-# Classes are directly mapped to tables, without the need for a mapper binding (ex mapper(Class, table_definition))
+# Classes are directly mapped to tables,
+# without the need for a mapper binding (ex mapper(Class, table_definition))
 class SpeedTestData(BASE):
-    """Defines Device object relational model, is used for both table creation and object interaction"""
+    """Defines Device object relational model,
+    is used for both table creation and object interaction"""
     __tablename__ = 'SpeedTestData'
     item_id = Column('item_id', INTEGER, primary_key=True)
     timestamp = Column('timestamp', TIMESTAMP, nullable=False)
