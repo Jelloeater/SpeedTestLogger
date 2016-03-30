@@ -36,6 +36,8 @@ class Setup:
     @staticmethod
     def create_tables():
         engine = get_engine()
+        logging.debug(os.getcwd())
+        logging.debug(os.path.dirname(os.path.abspath(__file__)))
         if not os.path.isfile('SpeedData.db'):
             BASE.metadata.drop_all(engine)
             BASE.metadata.create_all(engine)
@@ -81,3 +83,5 @@ class SpeedTestData(BASE):
         s = get_session()
         s.add(data)
         s.commit()
+        logging.debug(os.getcwd())
+        logging.debug(os.path.dirname(os.path.abspath(__file__)))

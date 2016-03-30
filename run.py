@@ -13,7 +13,7 @@ __author__ = 'jesse'
 
 
 def main():
-    LOG_FILENAME = 'error.log'
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug",
                         action="store_true",
@@ -34,17 +34,28 @@ def main():
     sendspeed.add_argument("-smtp_server")
 
     args = parser.parse_args()
+
+
     if args.debug:
-        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
+        LOG_FILENAME = 'error-debug.log'
+        logging.basicConfig(filename=LOG_FILENAME, format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
                                    "(%(filename)s:%(lineno)s)",
                             level=logging.DEBUG)
         logging.debug('Debug Mode Enabled')
         logging.debug(sys.path)
     else:
+        LOG_FILENAME = 'error.log'
         logging.basicConfig(filename=LOG_FILENAME,
                             format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
                                    "(%(filename)s:%(lineno)s)",
                             level=logging.WARNING)
+
+
+    logging.debug(os.getcwd())
+    logging.debug(os.path.dirname(os.path.abspath(__file__)))
+    os.chdir(os.path.dirname(sys.argv[0]))
+    logging.debug(os.getcwd())
+    logging.debug(os.path.dirname(os.path.abspath(__file__)))
 
     if args.getspeed:
         database.Setup.setup_sql_environment()
