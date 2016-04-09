@@ -13,6 +13,9 @@ __author__ = 'jesse'
 
 
 def main():
+    os.chdir(os.path.dirname(sys.argv[0]))  #Set working directory, so when script runs, it saves files with it
+    logging.debug(os.path.dirname(os.path.abspath(__file__)))
+    logging.debug(sys.path)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug",
@@ -37,25 +40,16 @@ def main():
 
 
     if args.debug:
-        LOG_FILENAME = 'error-debug.log'
-        logging.basicConfig(filename=LOG_FILENAME, format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
+        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
                                    "(%(filename)s:%(lineno)s)",
                             level=logging.DEBUG)
         logging.debug('Debug Mode Enabled')
-        logging.debug(sys.path)
     else:
         LOG_FILENAME = 'error.log'
         logging.basicConfig(filename=LOG_FILENAME,
                             format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
                                    "(%(filename)s:%(lineno)s)",
                             level=logging.WARNING)
-
-
-    logging.debug(os.getcwd())
-    logging.debug(os.path.dirname(os.path.abspath(__file__)))
-    os.chdir(os.path.dirname(sys.argv[0]))
-    logging.debug(os.getcwd())
-    logging.debug(os.path.dirname(os.path.abspath(__file__)))
 
     if args.getspeed:
         database.Setup.setup_sql_environment()
