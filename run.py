@@ -1,10 +1,8 @@
 import argparse
-from datetime import datetime
 import email
 import logging
-import os
 
-import speedtest_cli
+import speedtest
 
 import database
 
@@ -114,20 +112,13 @@ class GetSpeedTest:
         self.uploadResult = None
 
     def doSpeedTest(self):
-        path = 'python ' + str(speedtest_cli.__file__) + " --simple"
-        result = os.popen(path).read()
-
-        if 'Cannot' in result:
-            return {'date': datetime.now(), 'uploadResult': 0, 'downloadResult': 0, 'ping': 0}
-
-        resultSet = result.split('\n')
-        pingResult = resultSet[0]
-        downloadResult = resultSet[1]
-        uploadResult = resultSet[2]
-
-        self.pingResult = float(pingResult.replace('Ping: ', '').replace(' ms', ''))
-        self.downloadResult = float(downloadResult.replace('Download: ', '').replace(' Mbit/s', ''))
-        self.uploadResult = float(uploadResult.replace('Upload: ', '').replace(' Mbit/s', ''))
+        st=speedtest.Speedtest()
+        st.get_best_server()
+        st.download()
+        st.upload()
+        self.pingResult = st.results.ping
+        self.downloadResult = st.results.download
+        self.uploadResult = st.results.upload
         return self
 
 
