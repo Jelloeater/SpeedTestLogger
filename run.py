@@ -51,6 +51,10 @@ def main():
         else:
             print('Missing all arguments')
 
+    if args.debug:
+        t = SendSpeedTest.getTable()
+        logging.debug(t)
+
 
 class SendSpeedTest:
     def __init__(self):
@@ -94,7 +98,8 @@ class SendSpeedTest:
         msg['To'] = email.utils.formataddr(('Recipient', receive))
         msg['From'] = email.utils.formataddr(('Author', sender))
         d = SendSpeedTest.getAverageData()
-        msg['Subject'] = 'Speed Test | Avg Down: ' + str(d.down_speed) + ' | Up: ' + str(d.up_speed) + ' | Ping: ' + str(d.ping)
+        msg['Subject'] = 'Speed Test | Avg Down: ' + str(d.down_speed) + ' | Up: ' + str(
+            d.up_speed) + ' | Ping: ' + str(d.ping)
 
         server = smtplib.SMTP(SMTP_server)
         if args_debug:
@@ -112,7 +117,7 @@ class GetSpeedTest:
         self.uploadResult = None
 
     def doSpeedTest(self):
-        st=speedtest.Speedtest()
+        st = speedtest.Speedtest()
         st.get_best_server()
         st.download()
         st.upload()

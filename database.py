@@ -12,9 +12,12 @@ __author__ = 'jesse'
 # Global ORM BASE, used by module
 BASE = declarative_base()
 
+DB_PATH = '/data/SpeedData.db'
+
 
 def get_engine():
-    return create_engine('sqlite:///SpeedData.db')
+    # sqlite:////absolute/path/to/file.db
+    return create_engine('sqlite:///' + DB_PATH)
 
 
 def get_session():
@@ -36,7 +39,7 @@ class Setup:
     @staticmethod
     def create_tables():
         engine = get_engine()
-        if not os.path.isfile('SpeedData.db'):
+        if not os.path.isfile(DB_PATH):
             BASE.metadata.drop_all(engine)
             BASE.metadata.create_all(engine)
             logging.info('DATABASE INITIALIZED')
