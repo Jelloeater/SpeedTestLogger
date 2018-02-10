@@ -1,9 +1,5 @@
 ## SpeedTestLogger
-pip install speedtest-cli
-pip install sqlalchemy
-pip install PrettyTable
-pip install pygal
-python run.py
+See Dockerfile for info
 
 ## Credits
 Borrowed SpeedTest Parser from james-atkinson/speedcomplainer
