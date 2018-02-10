@@ -81,7 +81,7 @@ class SpeedTestData(BASE):
         data.timestamp = datetime.datetime.now()
         data.up_speed = speed_data.uploadResult
         data.down_speed = speed_data.downloadResult
-        data.ping = (speed_data.pingResult)
+        data.ping = speed_data.pingResult
         s = get_session()
         s.add(data)
         s.commit()

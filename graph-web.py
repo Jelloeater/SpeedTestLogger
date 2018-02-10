@@ -1,9 +1,11 @@
 import argparse
 import logging
 
-__author__ = 'Jesse'
 import pygal
 from flask import Flask
+
+__author__ = 'Jesse'
+
 
 app = Flask(__name__)
 

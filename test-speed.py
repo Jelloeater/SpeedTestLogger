@@ -1,11 +1,9 @@
 import argparse
-from datetime import datetime
 import email
 import logging
-import os
 
 import speedtest
-import sys
+from prettytable import PrettyTable
 
 import database
 
@@ -35,14 +33,13 @@ def main():
 
     args = parser.parse_args()
     if args.debug:
-        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
+        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
                                    "(%(filename)s:%(lineno)s)",
                             level=logging.DEBUG)
         logging.debug('Debug Mode Enabled')
     else:
-        LOG_FILENAME = 'error.log'
         logging.basicConfig(filename=LOG_FILENAME,
-                            format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
+                            format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
                                    "(%(filename)s:%(lineno)s)",
                             level=logging.WARNING)
 
@@ -69,7 +66,7 @@ class SendSpeedTest:
 
     @staticmethod
     def getTable(num_of_days=7):
-        from prettytable import PrettyTable
+
         x = PrettyTable()
         x.field_names = ('Timestamp', 'Upload', 'Download', 'Ping')
         data = database.SpeedTestData.get_x_days(num_of_days)
