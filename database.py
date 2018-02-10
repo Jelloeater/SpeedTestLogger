@@ -1,6 +1,7 @@
 import os
 import datetime
 import logging
+import platform
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, TIMESTAMP, FLOAT, INTEGER
@@ -12,7 +13,10 @@ __author__ = 'jesse'
 # Global ORM BASE, used by module
 BASE = declarative_base()
 
-DB_PATH = '/data/SpeedData.db'
+if platform.system() == 'Windows':
+    DB_PATH = 'SpeedData.db'
+else:
+    DB_PATH = '/data/SpeedData.db'
 
 
 def get_engine():

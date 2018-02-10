@@ -4,8 +4,9 @@ import logging
 import pygal
 from flask import Flask
 
-__author__ = 'Jesse'
+import database
 
+__author__ = 'Jesse'
 
 app = Flask(__name__)
 
@@ -30,19 +31,23 @@ def main():
     if args.debug:
         logging.debug('DEBUG MODE ON`')
 
-    app.run()
-
 
 @app.route('/')
 def get_data():
-    from datetime import datetime
-    date_chart = pygal.Line(x_label_rotation=0, width=1200, height=600, explicit_size=True)
-    date_chart.x_labels = map(lambda d: d.strftime('%Y-%m-%d'), [
-        datetime(2013, 1, 2),
-        datetime(2013, 1, 12),
-        datetime(2013, 2, 2),
-        datetime(2013, 2, 22)])
-    date_chart.add("Visits", [300, 412, 823, 672])
+    return get_data_last(7)
+
+
+@app.route('/<last>')
+def get_data_last(last):
+    data = database.SpeedTestData.get_x_days(last)
+
+    date_chart = pygal.Line(x_label_rotation=-45, width=1200, height=600, explicit_size=True)
+
+    date_chart.x_labels = [data.timestamp for data in data]
+
+    date_chart.add("Upload", [data.up_speed/1000000 for data in data])
+    date_chart.add("Download", [data.down_speed/1000000 for data in data])
+    date_chart.add("Ping", [data.ping for data in data], secondary=True)
     date_chart.render()
 
     html = """
@@ -60,4 +65,5 @@ def get_data():
 # ----------------------------------------------------------------------
 if __name__ == '__main__':
     main()
+    # x=get_data()
     app.run()
