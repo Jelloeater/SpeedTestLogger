@@ -12,9 +12,12 @@ __author__ = 'jesse'
 # Global ORM BASE, used by module
 BASE = declarative_base()
 
+DB_PATH = '/data/SpeedData.db'
+
 
 def get_engine():
-    return create_engine('sqlite:///SpeedData.db')
+    # sqlite:////absolute/path/to/file.db
+    return create_engine('sqlite:///' + DB_PATH)
 
 
 def get_session():
@@ -38,7 +41,7 @@ class Setup:
         engine = get_engine()
         logging.debug(os.getcwd())
         logging.debug(os.path.dirname(os.path.abspath(__file__)))
-        if not os.path.isfile('SpeedData.db'):
+        if not os.path.isfile(DB_PATH):
             BASE.metadata.drop_all(engine)
             BASE.metadata.create_all(engine)
             logging.info('DATABASE INITIALIZED')
@@ -79,9 +82,6 @@ class SpeedTestData(BASE):
         data.up_speed = speed_data.uploadResult
         data.down_speed = speed_data.downloadResult
         data.ping = (speed_data.pingResult)
-        logging.debug(data.__dict__)
         s = get_session()
         s.add(data)
         s.commit()
-        logging.debug(os.getcwd())
-        logging.debug(os.path.dirname(os.path.abspath(__file__)))

@@ -4,7 +4,7 @@ import email
 import logging
 import os
 
-import speedtest_cli
+import speedtest
 import sys
 
 import database
@@ -13,10 +13,7 @@ __author__ = 'jesse'
 
 
 def main():
-    os.chdir(os.path.dirname(sys.argv[0]))  #Set working directory, so when script runs, it saves files with it
-    logging.debug(os.path.dirname(os.path.abspath(__file__)))
-    logging.debug(sys.path)
-
+    LOG_FILENAME = 'error.log'
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug",
                         action="store_true",
@@ -37,17 +34,15 @@ def main():
     sendspeed.add_argument("-smtp_server")
 
     args = parser.parse_args()
-
-
     if args.debug:
-        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
+        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
                                    "(%(filename)s:%(lineno)s)",
                             level=logging.DEBUG)
         logging.debug('Debug Mode Enabled')
     else:
         LOG_FILENAME = 'error.log'
         logging.basicConfig(filename=LOG_FILENAME,
-                            format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
+                            format="[%(asctime)s] [%(levelname)8s] --- %(message)s (%(filename)s:%(lineno)s)",
                                    "(%(filename)s:%(lineno)s)",
                             level=logging.WARNING)
 
@@ -62,6 +57,10 @@ def main():
             SendSpeedTest.sendEmail(args.from_email, args.to_email, args.smtp_server, args.debug)
         else:
             print('Missing all arguments')
+
+    if args.debug:
+        t = SendSpeedTest.getTable()
+        logging.debug(t)
 
 
 class SendSpeedTest:
@@ -107,8 +106,8 @@ class SendSpeedTest:
         msg['To'] = email.utils.formataddr(('Recipient', receive))
         msg['From'] = email.utils.formataddr(('Author', sender))
         d = SendSpeedTest.getAverageData()
-        msg['Subject'] = 'Speed Test | Avg Down: ' + str(d.down_speed) + ' | Up: ' \
-                         + str(d.up_speed) + ' | Ping: ' + str(d.ping)
+        msg['Subject'] = 'Speed Test | Avg Down: ' + str(d.down_speed) + ' | Up: ' + str(
+            d.up_speed) + ' | Ping: ' + str(d.ping)
 
         server = smtplib.SMTP(SMTP_server)
         if args_debug:
@@ -126,21 +125,13 @@ class GetSpeedTest:
         self.uploadResult = None
 
     def doSpeedTest(self):
-        path = str(sys.executable)+ ' ' + str(speedtest_cli.__file__) + " --simple"
-        logging.debug(path)
-        result = os.popen(path).read()
-
-        if 'Cannot' in result:
-            return {'date': datetime.now(), 'uploadResult': 0, 'downloadResult': 0, 'ping': 0}
-
-        resultSet = result.split('\n')
-        pingResult = resultSet[0]
-        downloadResult = resultSet[1]
-        uploadResult = resultSet[2]
-
-        self.pingResult = float(pingResult.replace('Ping: ', '').replace(' ms', ''))
-        self.downloadResult = float(downloadResult.replace('Download: ', '').replace(' Mbit/s', ''))
-        self.uploadResult = float(uploadResult.replace('Upload: ', '').replace(' Mbit/s', ''))
+        st = speedtest.Speedtest()
+        st.get_best_server()
+        st.download()
+        st.upload()
+        self.pingResult = st.results.ping
+        self.downloadResult = st.results.download
+        self.uploadResult = st.results.upload
         return self
 
 
