@@ -75,4 +75,4 @@ def get_data_last(last):
 if __name__ == '__main__':
     main()
     # x=get_data()
-    app.run()
+    app.run(host='0.0.0.0', port=5000)
