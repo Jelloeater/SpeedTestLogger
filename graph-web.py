@@ -39,66 +39,23 @@ def get_data():
 
 @app.route('/<last>')
 def get_data_last(last):
-    data = database.SpeedTestData.get_x_days(last)
+    data = database.SpeedTestData.get_x_days(int(last))
 
     date_chart = pygal.DateTimeLine(x_label_rotation=-45, width=1200, height=600, explicit_size=True,
-                                    # x_value_formatter=lambda dt: dt.strftime('%d, %b %Y at %I:%M:%S %p')
-                                    )
+                                    dynamic_print_values=True, value_font_size=12, human_readable=True)
+    date_chart.value_formatter = lambda x: "%.2f" % x
 
-    # date_chart.x_labels = [data.timestamp for data in data]
+    upload_d = []
+    down_d = []
+    ping_d = []
+    for i in data:
+        upload_d.append((i.timestamp, i.up_speed / 1000000))
+        down_d.append((i.timestamp, i.down_speed / 1000000))
+        ping_d.append((i.timestamp, i.ping))
 
-
-    # date_chart = pygal.DateTimeLine(
-    #     x_label_rotation=35, truncate_label=-1,
-    #     x_value_formatter=lambda dt: dt.strftime('%d, %b %Y at %I:%M:%S %p'))
-    # date_chart.add("Serie", [
-    #     (datetime(2013, 1, 2, 12, 0), 300),
-    #     (datetime(2013, 1, 12, 14, 30, 45), 412),
-    #     (datetime(2013, 2, 2, 6), 823),
-    #     (datetime(2013, 2, 22, 9, 45), 672)
-    # ])
-    # date_chart.render()
-    #
-
-
-
-
-
-    time_d = [data.timestamp for data in data]
-    upload_d = [data.up_speed / 1000000 for data in data]
-    down_d = [data.down_speed / 1000000 for data in data]
-    ping_d = [data.ping for data in data]
-
-    up_time_d = time_d,upload_d
-    #
-    # date_chart.add("Upload", [time_d,upload_d])
-    # date_chart.add("Download", [time_d,down_d])
-    # date_chart.add("Ping", [time_d,ping_d], secondary=True)
-    # date_chart.add("Upload", [time_d,upload_d])
-
-    # date_chart.add("Upload", up_time_d)
-
-
-
-    data1= [time_d[0], upload_d[0]]
-    data2= [time_d[1], upload_d[1]]
-    data3= [time_d[2], upload_d[2]]
-    data_list= data1,data2,data3
-    date_chart.add("Upload2", data_list)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    date_chart.add("Upload", upload_d)
+    date_chart.add("Download", down_d)
+    date_chart.add("Ping", ping_d, secondary=True)
 
     date_chart.render()
 
