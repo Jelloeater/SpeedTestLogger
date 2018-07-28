@@ -1,11 +1,10 @@
 import argparse
-import email
 import logging
 
 import speedtest
 from prettytable import PrettyTable
 
-import database
+from Database import database
 
 __author__ = 'jesse'
 

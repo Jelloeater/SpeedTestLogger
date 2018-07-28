@@ -1,0 +1,23 @@
+version: '3'
+services:
+  speedtest:
+    build: ./SpeedTest
+
+  webgui:
+    build: ./WebGUI
+    ports:
+     - "5000:5000"
+
+
+  speed-sql:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: speed_user
+      POSTGRES_PASSWORD: speed_pass
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

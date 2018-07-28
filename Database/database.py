@@ -1,12 +1,12 @@
-import os
 import datetime
 import logging
+import os
 import platform
 
-from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, TIMESTAMP, FLOAT, INTEGER
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 __author__ = 'jesse'
 
@@ -21,7 +21,9 @@ else:
 
 def get_engine():
     # sqlite:////absolute/path/to/file.db
-    return create_engine('sqlite:///' + DB_PATH)
+
+    return create_engine('postgresql://speed_user:speed_pass@speedSQL:5432/speeddb')
+    # return create_engine('sqlite:///' + DB_PATH)
 
 
 def get_session():

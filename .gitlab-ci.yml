@@ -1,0 +1,12 @@
+stages:
+    - build_image
+
+before_script:
+  - docker info
+
+run_image:
+    stage: run_image
+    script:
+    - docker-compose up
+    after_script:
+    - docker-compose down
