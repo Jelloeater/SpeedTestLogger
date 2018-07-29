@@ -16,7 +16,9 @@ BASE = declarative_base()
 
 def get_engine():
     # sqlite:////absolute/path/to/file.db
-    engine = create_engine('postgresql://speed_user:speed_pass@speedsql:5432/speeddb')
+    SQL_HOSTNAME = os.environ['SQL_HOSTNAME']
+    engine_url = 'postgresql://speed_user:speed_pass@' + SQL_HOSTNAME + ':5432/speeddb'
+    engine = create_engine(engine_url)
     if not database_exists(engine.url):
         create_database(engine.url)
     return engine

@@ -1,22 +1,24 @@
 # SpeedTestLogger
-Buld commands
-* docker-compose up -d
+##Buld commands
+`docker-compose up -d`
 
-OR
+**BUT**
 
-docker build . -f ./speed/Dockerfile
+You are going to need a Postgres DB as well, the docker-compose will provide that
 
-BUT
+To run speed test (w/ cron for example):
 
-You are going to need a Postgres DB as well
+`docker start speedtest`
 
-To run test (w/ cron for example):
+* See docker-compose.yml for production
+* See individual Dockerfile's for pip requirments
+* See .gitlab-ci.yml for test enviroment
 
-* docker start speedtest
+##**NOTE**
 
-See docker-compose.yml for production
-See individual Dockerfile's for pip requirments
-See .gitlab-ci.yml for test enviroment
+You CANNOT run the docker files from the directory they are in, or you will get add errors. If you try and change it to run from where it is, you will get import errors.
+
+It works this way, trust me.
 
 ## Credits
 Borrowed SpeedTest Parser from james-atkinson/speedcomplainer

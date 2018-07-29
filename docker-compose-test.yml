@@ -1,27 +1,29 @@
 version: '3'
 services:
-  speedtest:
+  speedtest-dev:
     depends_on:
-      - speedsql
+      - speedsql-dev
     build:
       context: .
       dockerfile: speed/Dockerfile
     environment:
-      - SQL_HOSTNAME=speedsql
+      - SQL_NAME=speedsql-dev
+    entrypoint: python
+    command: ./test_speed_test.py
 
-  webgui:
+  webgui-dev:
     depends_on:
-      - speedsql
+      - speedsql-dev
     build:
       context: .
       dockerfile: web/Dockerfile
     environment:
-      - SQL_HOSTNAME=speedsql
+      - SQL_NAME=speedsql-dev
     ports:
-     - "5000:5000"
+     - "5001:5000"
 
 
-  speedsql:
+  speedsql-dev:
     image: postgres
     restart: always
     ports:
@@ -30,10 +32,8 @@ services:
       POSTGRES_USER: speed_user
       POSTGRES_PASSWORD: speed_pass
 
-  adminer:
-    depends_on:
-      - speedsql
+  adminer-dev:
     image: adminer
     restart: always
     ports:
-      - 8081:8080
+      - 8082:8080
