@@ -4,7 +4,7 @@ import logging
 import pygal
 from flask import Flask
 
-import Database.databasehelper as databasehelper
+from Database import databasehelper
 
 __author__ = 'Jesse'
 
