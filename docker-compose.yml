@@ -1,18 +1,14 @@
 version: '3'
 services:
   speedtest:
-    entrypoint: python
-    command: ./test-speed.py -g --debug
     build:
       context: .
-      dockerfile: Dockerfile-speed
+      dockerfile: speed/Dockerfile
 
   webgui:
-    entrypoint: python
-    command: ./graph-web.py
     build:
       context: .
-      dockerfile: Dockerfile-web
+      dockerfile: web/Dockerfile
     ports:
      - "5000:5000"
 
@@ -20,6 +16,8 @@ services:
   speedsql:
     image: postgres
     restart: always
+    ports:
+    - "5433:5432"
     environment:
       POSTGRES_USER: speed_user
       POSTGRES_PASSWORD: speed_pass
