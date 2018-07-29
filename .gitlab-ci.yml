@@ -7,8 +7,8 @@ before_script:
 run_image:
     stage: run_image
     script:
-    - docker-compose build
-    - docker-compose up -d
+    - docker-compose -f docker-compose-test.yml build
+    - docker-compose -d -f docker-compose-test.yml up
     after_script:
-    - docker-compose down
+    - docker-compose -f docker-compose-test.yml down
 
