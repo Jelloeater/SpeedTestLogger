@@ -1,29 +1,25 @@
 import datetime
 import logging
 import os
-import platform
 
-from sqlalchemy import Column, TIMESTAMP, FLOAT, INTEGER
+from sqlalchemy import Column, TIMESTAMP, FLOAT, INTEGER, inspect
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy_utils import database_exists, create_database
 
 __author__ = 'jesse'
 
 # Global ORM BASE, used by module
 BASE = declarative_base()
 
-if platform.system() == 'Windows':
-    DB_PATH = 'SpeedData.db'
-else:
-    DB_PATH = '/data/SpeedData.db'
-
 
 def get_engine():
     # sqlite:////absolute/path/to/file.db
-
-    return create_engine('postgresql://speed_user:speed_pass@speedsql:5432/speeddb')
-    # return create_engine('sqlite:///' + DB_PATH)
+    engine = create_engine('postgresql://speed_user:speed_pass@speedsql:5432/speeddb')
+    if not database_exists(engine.url):
+        create_database(engine.url)
+    return engine
 
 
 def get_session():
@@ -47,7 +43,10 @@ class Setup:
         engine = get_engine()
         logging.debug(os.getcwd())
         logging.debug(os.path.dirname(os.path.abspath(__file__)))
-        if not os.path.isfile(DB_PATH):
+
+        # check table exists
+        ins = inspect(engine)
+        if 'SpeedTestData' not in ins.get_table_names():
             BASE.metadata.drop_all(engine)
             BASE.metadata.create_all(engine)
             logging.info('DATABASE INITIALIZED')

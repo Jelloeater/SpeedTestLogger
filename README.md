@@ -1,19 +1,22 @@
 # SpeedTestLogger
 Buld commands
+* docker-compose up -d
 
-* docker volume create speed
-* docker build -t speed .
+OR
 
-Run in order, for each component (if none specified, just run the web server):
+docker build . -f ./speed/Dockerfile
 
-* docker run  -d --name speed-test -v speed:/data speed "./test-speed.py" "-g" "--debug"
-* docker run  -d --name speed-server -p 8080:5000 -v speed:/data speed "./graph-web.py" "--debug"
+BUT
 
-To run test:
+You are going to need a Postgres DB as well
 
-* docker start speed-test
+To run test (w/ cron for example):
 
-See Dockerfile for info
+* docker start speedtest
+
+See docker-compose.yml for production
+See individual Dockerfile's for pip requirments
+See .gitlab-ci.yml for test enviroment
 
 ## Credits
 Borrowed SpeedTest Parser from james-atkinson/speedcomplainer
