@@ -1,23 +1,10 @@
-import sys
-print(sys.path)
-sys.path.append('/Database')
-print(sys.path)
-import os
+import argparse
+import logging
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-print(sys.path)
+import speedtest
+from prettytable import PrettyTable
 
-print(os.listdir('..'))
-print(os.listdir(os.getcwd()))
-print(os.listdir('/Database'))
-
-
-# import argparse
-# import logging
-# import speedtest
-# from prettytable import PrettyTable
 from Database import databasehelper
-
 
 __author__ = 'jesse'
 

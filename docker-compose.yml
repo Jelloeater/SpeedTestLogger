@@ -2,17 +2,17 @@ version: '3'
 services:
   speedtest:
     entrypoint: python
-    command: ./SpeedTest/test-speed.py -g --debug
+    command: ./test-speed.py -g --debug
     build:
       context: .
-      dockerfile: ./SpeedTest/Dockerfile
+      dockerfile: Dockerfile-speed
 
   webgui:
     entrypoint: python
-    command: ./WebGUI/graph-web.py
+    command: ./graph-web.py
     build:
       context: .
-      dockerfile: ./WebGUI/Dockerfile
+      dockerfile: Dockerfile-web
     ports:
      - "5000:5000"
 

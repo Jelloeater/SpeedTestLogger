@@ -1,12 +1,10 @@
-import sys
-sys.path.append('../')
-# sys.path.append('/Database/')
-
 import argparse
 import logging
+
 import pygal
 from flask import Flask
-from Database import databasehelper
+
+import Database.databasehelper as databasehelper
 
 __author__ = 'Jesse'
 
