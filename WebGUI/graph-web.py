@@ -1,10 +1,12 @@
+import sys
+sys.path.append('../')
+# sys.path.append('/Database/')
+
 import argparse
 import logging
-
 import pygal
 from flask import Flask
-
-from Database import database
+from Database import databasehelper
 
 __author__ = 'Jesse'
 
@@ -39,7 +41,7 @@ def get_data():
 
 @app.route('/<last>')
 def get_data_last(last):
-    data = database.SpeedTestData.get_x_days(int(last))
+    data = databasehelper.SpeedTestData.get_x_days(int(last))
 
     date_chart = pygal.DateTimeLine(x_label_rotation=-45, width=1200, height=600, explicit_size=True,
                                     dynamic_print_values=True, value_font_size=12, human_readable=True)

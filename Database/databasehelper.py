@@ -22,7 +22,7 @@ else:
 def get_engine():
     # sqlite:////absolute/path/to/file.db
 
-    return create_engine('postgresql://speed_user:speed_pass@speedSQL:5432/speeddb')
+    return create_engine('postgresql://speed_user:speed_pass@speedsql:5432/speeddb')
     # return create_engine('sqlite:///' + DB_PATH)
 
 

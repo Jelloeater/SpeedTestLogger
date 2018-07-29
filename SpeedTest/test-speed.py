@@ -1,10 +1,17 @@
+import sys
+sys.path.append('../')
+# sys.path.append('/Database/')
 import argparse
 import logging
-
 import speedtest
 from prettytable import PrettyTable
 
-from Database import database
+# import os
+# print(os.listdir(os.getcwd()))
+# os.chdir('../Database')
+# print(os.listdir(os.getcwd()))
+from Database import databasehelper
+# os.chdir('../SpeedTest')
 
 __author__ = 'jesse'
 
@@ -43,9 +50,9 @@ def main():
                             level=logging.WARNING)
 
     if args.getspeed:
-        database.Setup.setup_sql_environment()
+        databasehelper.Setup.setup_sql_environment()
         speed_data = GetSpeedTest().doSpeedTest()
-        database.SpeedTestData.put_data(speed_data)
+        databasehelper.SpeedTestData.put_data(speed_data)
 
     if args.sendspeed:
         # SendSpeedTest.sendEmail(None,None,None,True) # DEBUG TEST
@@ -68,7 +75,7 @@ class SendSpeedTest:
 
         x = PrettyTable()
         x.field_names = ('Timestamp', 'Upload', 'Download', 'Ping')
-        data = database.SpeedTestData.get_x_days(num_of_days)
+        data = databasehelper.SpeedTestData.get_x_days(num_of_days)
         for i in data:
             x.add_row([str(i.timestamp).split('.')[0], i.up_speed, i.down_speed, str(int(i.ping))])
         logging.debug('\n' + str(x) + '\n')
@@ -76,7 +83,7 @@ class SendSpeedTest:
 
     @staticmethod
     def getAverageData(num_of_days=7):
-        data = database.SpeedTestData.get_x_days(num_of_days)
+        data = databasehelper.SpeedTestData.get_x_days(num_of_days)
         avg = type('', (object,), {})()  # Create dummy object
         avg.up_speed = 0
         avg.down_speed = 0
