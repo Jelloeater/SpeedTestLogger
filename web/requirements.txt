@@ -1,0 +1,6 @@
+Flask
+pygal
+SQLAlchemy
+psycopg2
+sqlalchemy-utils
+pytest

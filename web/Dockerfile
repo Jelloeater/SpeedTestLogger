@@ -2,12 +2,7 @@
 FROM python:3
 ADD /web /
 ADD /Database /Database
-RUN pip install Flask
-RUN pip install pygal
-RUN pip install SQLAlchemy
-RUN pip install psycopg2
-RUN pip install sqlalchemy-utils
-RUN pip install pytest
+RUN pip install -r requirements.txt
 RUN ls
 EXPOSE 5000
 ENTRYPOINT [ "python"]

@@ -1,0 +1,6 @@
+prettytable
+speedtest-cli
+SQLAlchemy
+psycopg2
+sqlalchemy-utils
+pytest

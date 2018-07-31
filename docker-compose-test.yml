@@ -9,7 +9,7 @@ services:
     environment:
       - SQL_NAME=speedsql-dev
     entrypoint: python
-    command: ./test_speed_test.py
+    command: -m pytest
 
   webgui-dev:
     depends_on:
