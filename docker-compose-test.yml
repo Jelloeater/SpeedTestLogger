@@ -22,18 +22,24 @@ services:
     ports:
      - "5001:5000"
 
-
   speedsql-dev:
     image: postgres
     restart: always
+    # For external access, not needed in production
     ports:
-    - "5433:5432"
+    - "5432:5432"
     environment:
       POSTGRES_USER: speed_user
       POSTGRES_PASSWORD: speed_pass
+      POSTGRES_DB: speeddb
+      volumes:
+        - speed-data-vol-dev:/var/lib/postgresql/data
 
   adminer-dev:
     image: adminer
     restart: always
     ports:
       - 8082:8080
+
+volumes:
+  speed-data-vol-dev:

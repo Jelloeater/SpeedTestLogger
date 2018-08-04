@@ -8,10 +8,11 @@ You are going to need a Postgres DB as well, the docker-compose will provide tha
 
 To run speed test (w/ cron for example):
 
-`docker start speedtest`
+`docker-compose build`
+`docker-compose up -d`
 
-* See docker-compose.yml for production
-* See individual Dockerfile's for pip requirments
+* See docker-compose.yml for production enviroment definition
+* See individual Dockerfile's for microservice requirments
 * See .gitlab-ci.yml for test enviroment
 
 ##**NOTE**

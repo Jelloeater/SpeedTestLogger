@@ -19,8 +19,6 @@ def get_engine():
     SQL_HOSTNAME = os.environ['SQL_HOSTNAME']
     engine_url = 'postgresql://speed_user:speed_pass@' + SQL_HOSTNAME + ':5432/speeddb'
     engine = create_engine(engine_url)
-    if not database_exists(engine.url):
-        create_database(engine.url)
     return engine
 
 
@@ -37,8 +35,18 @@ class Setup:
 
     @staticmethod
     def setup_sql_environment():
-        logging.debug('Creating table if not already present')
+        logging.debug('Checking SQL Enviroment...')
+        Setup.create_db()
         Setup.create_tables()
+
+    @staticmethod
+    def create_db():
+        engine = get_engine()
+        if not database_exists(engine.url):
+            create_database(engine.url)
+            logging.info('DB INITIALIZED')
+        else:
+            logging.debug('DB PRESENT')
 
     @staticmethod
     def create_tables():
@@ -51,9 +59,9 @@ class Setup:
         if 'SpeedTestData' not in ins.get_table_names():
             BASE.metadata.drop_all(engine)
             BASE.metadata.create_all(engine)
-            logging.info('DATABASE INITIALIZED')
+            logging.info('TABLE INITIALIZED')
         else:
-            logging.info('DATABASE PRESENT')
+            logging.debug('TABLE PRESENT')
 
 
 # Classes are directly mapped to tables,

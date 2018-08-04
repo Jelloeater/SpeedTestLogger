@@ -1,6 +1,7 @@
 version: '3'
 services:
   speedtest:
+    restart: on-failure
     depends_on:
       - speedsql
     build:
@@ -20,20 +21,26 @@ services:
     ports:
      - "5000:5000"
 
-
   speedsql:
     image: postgres
     restart: always
-    ports:
-    - "5433:5432"
     environment:
       POSTGRES_USER: speed_user
       POSTGRES_PASSWORD: speed_pass
+      POSTGRES_DB: speeddb
+    volumes:
+      - speed-data-vol:/var/lib/postgresql/data
 
-  adminer:
+  pgadmin4:
     depends_on:
       - speedsql
-    image: adminer
+    image: dpage/pgadmin4
     restart: always
     ports:
-      - 8081:8080
+      - 8081:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.local
+      PGADMIN_DEFAULT_PASSWORD: changeme
+
+volumes:
+  speed-data-vol:
