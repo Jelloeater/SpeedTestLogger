@@ -7,9 +7,9 @@ RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 RUN ssh-keygen -A
 
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
-ADD /speed /
-ADD /Database /Database
-RUN pip install -r requirements.txt
+ADD /speed /speed
+ADD /Database /speed/Database
+RUN pip install -r /speed/requirements.txt
 RUN ls
 
 WORKDIR /

@@ -1,5 +1,5 @@
 stages:
-    - build_image
+    - run_image
 
 before_script:
   - docker info

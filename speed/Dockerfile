@@ -1,8 +1,8 @@
 # Build me from the root dir EX docker build . -f ./speed/Dockerfile
 FROM python:3.6
-ADD /speed /
-ADD /Database /Database
-RUN pip install -r requirements.txt
+ADD /speed /speed
+ADD /Database /speed/Database
+RUN pip install -r /speed/requirements.txt
 RUN ls
 ENTRYPOINT [ "python"]
-CMD ["./speed_test.py","-g", "--debug"]
+CMD ["/speed/speed_test.py","-g", "--debug"]
