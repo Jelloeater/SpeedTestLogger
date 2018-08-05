@@ -1,5 +1,5 @@
 # Build me from the root dir EX docker build . -f ./speed/Dockerfile
-FROM python:3
+FROM python:3.6
 ADD /web /
 ADD /Database /Database
 RUN pip install -r requirements.txt

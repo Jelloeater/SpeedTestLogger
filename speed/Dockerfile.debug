@@ -1,22 +1,17 @@
-FROM ubuntu:16.04
+FROM python:3.6-alpine
 
-RUN apt-get update && apt-get install -y openssh-server
-RUN mkdir /var/run/sshd
-RUN echo 'root:root' | chpasswd
-RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+RUN apk add openssh
+RUN mkdir /root/.ssh && chmod 700 /root/.ssh
+RUN echo "root:changeme" | chpasswd
+RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+RUN ssh-keygen -A
 
-# SSH login fix. Otherwise user is kicked off after login
-RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
-
-ENV NOTVISIBLE "in users profile"
-RUN echo "export VISIBLE=now" >> /etc/profile
-
-RUN apt-get install python3 -y
-RUN apt-get install python-pip -y
+RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev
 ADD /speed /
 ADD /Database /Database
 RUN pip install -r requirements.txt
 RUN ls
 
+WORKDIR /
 EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+CMD [ "/usr/sbin/sshd", "-D", "-e"]

@@ -2,22 +2,25 @@ version: '3'
 services:
   speedtest-dev:
     ports:
-      - 22
+    - "2222:22"
     restart: on-failure
     depends_on:
       - speedsql-dev
     build:
       context: .
+      #dockerfile: speed/Dockerfile
       dockerfile: speed/Dockerfile.debug
+#    entrypoint: python
+#    command: -m pytest
+
+
     environment:
       SQL_HOSTNAME: speedsql
       SQL_USERNAME: speed_user
       SQL_PASSWORD: speed_pass
       SQL_PORT: 5432
       SQL_DB: speeddb
-    command: /usr/sbin/sshd -D
-#    entrypoint: python
-#    command: -m pytest
+
 
   webgui-dev:
     depends_on:
@@ -32,14 +35,14 @@ services:
       SQL_PORT: 5432
       SQL_DB: speeddb
     ports:
-     - 5001:5000
+     - "5001:5000"
 
   speedsql-dev:
     image: postgres
     restart: always
     # For external access, not needed in production
     ports:
-    - 5432:5432
+    - "5432:5432"
     environment:
       POSTGRES_USER: speed_user
       POSTGRES_PASSWORD: speed_pass
@@ -52,7 +55,7 @@ services:
     image: adminer
     restart: always
     ports:
-      - 8082:8080
+      - "8082:8080"
 
 volumes:
   speed-data-vol-dev:

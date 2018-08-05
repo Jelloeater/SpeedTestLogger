@@ -33,7 +33,7 @@ services:
       SQL_PORT: 5432
       SQL_DB: speeddb
     ports:
-      - 5000:5000
+      - "5000:5000"
 
   speedsql:
     image: postgres
@@ -52,7 +52,7 @@ services:
     image: dpage/pgadmin4
     restart: always
     ports:
-      - 8081:80
+      - "8081:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.local
       PGADMIN_DEFAULT_PASSWORD: changeme
