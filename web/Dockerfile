@@ -4,6 +4,6 @@ ADD /web /
 ADD /Database /Database
 RUN pip install -r requirements.txt
 RUN ls
-EXPOSE 5000
+#EXPOSE 5000
 ENTRYPOINT [ "python"]
 CMD ["./graph_web.py"]

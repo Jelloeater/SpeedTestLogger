@@ -8,7 +8,11 @@ services:
       context: .
       dockerfile: speed/Dockerfile
     environment:
-      - SQL_HOSTNAME=speedsql
+      SQL_HOSTNAME: speedsql
+      SQL_USERNAME: speed_user
+      SQL_PASSWORD: speed_pass
+      SQL_PORT: 5432
+      SQL_DB: speeddb
 
   webgui:
     depends_on:
@@ -17,9 +21,13 @@ services:
       context: .
       dockerfile: web/Dockerfile
     environment:
-      - SQL_HOSTNAME=speedsql
+      SQL_HOSTNAME: speedsql
+      SQL_USERNAME: speed_user
+      SQL_PASSWORD: speed_pass
+      SQL_PORT: 5432
+      SQL_DB: speeddb
     ports:
-     - "5000:5000"
+      - "5000:5000"
 
   speedsql:
     image: postgres
@@ -31,7 +39,8 @@ services:
     volumes:
       - speed-data-vol:/var/lib/postgresql/data
 
-  pgadmin4:
+  pgadmin:
+  # Heavy weight GUI for production
     depends_on:
       - speedsql
     image: dpage/pgadmin4
@@ -41,6 +50,15 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.local
       PGADMIN_DEFAULT_PASSWORD: changeme
+
+  #docker run -p 443:443 \
+  #-v "/private/var/lib/pgadmin:/var/lib/pgadmin" \
+  #-v "/path/to/certificate.cert:/certs/server.cert" \
+  #-v "/path/to/certificate.key:/certs/server.key" \
+  #-e "PGADMIN_DEFAULT_EMAIL=user@domain.com" \
+  #-e "PGADMIN_DEFAULT_PASSWORD=SuperSecret" \
+  #-e "PGADMIN_ENABLE_TLS=True" \
+  #-d dpage/pgadmin4
 
 volumes:
   speed-data-vol:

@@ -17,7 +17,11 @@ BASE = declarative_base()
 def get_engine():
     # sqlite:////absolute/path/to/file.db
     SQL_HOSTNAME = os.environ['SQL_HOSTNAME']
-    engine_url = 'postgresql://speed_user:speed_pass@' + SQL_HOSTNAME + ':5432/speeddb'
+    SQL_USERNAME = os.environ['SQL_USERNAME']
+    SQL_PASSWORD = os.environ['SQL_PASSWORD']
+    SQL_PORT = os.environ['SQL_PORT']
+    SQL_DB = os.environ['SQL_DB']
+    engine_url = 'postgresql://'+SQL_USERNAME+':'+SQL_PASSWORD+'@' + SQL_HOSTNAME + ':'+SQL_PORT+'/'+SQL_DB
     engine = create_engine(engine_url)
     return engine
 
