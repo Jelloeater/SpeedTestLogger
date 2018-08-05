@@ -7,12 +7,18 @@ services:
     build:
       context: .
       dockerfile: speed/Dockerfile
+
     environment:
       SQL_HOSTNAME: speedsql
       SQL_USERNAME: speed_user
       SQL_PASSWORD: speed_pass
       SQL_PORT: 5432
       SQL_DB: speeddb
+
+#  logging:
+#    driver: syslog
+#    options:
+#      syslog-address: "tcp://192.168.0.42:123"
 
   webgui:
     depends_on:
@@ -27,7 +33,7 @@ services:
       SQL_PORT: 5432
       SQL_DB: speeddb
     ports:
-      - "5000:5000"
+      - 5000:5000
 
   speedsql:
     image: postgres
@@ -59,6 +65,8 @@ services:
   #-e "PGADMIN_DEFAULT_PASSWORD=SuperSecret" \
   #-e "PGADMIN_ENABLE_TLS=True" \
   #-d dpage/pgadmin4
+
+
 
 volumes:
   speed-data-vol:
