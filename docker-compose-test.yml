@@ -2,7 +2,7 @@ version: '3'
 services:
   speedtest-dev:
     ports:
-     - 2222:22
+      - 22
     restart: on-failure
     depends_on:
       - speedsql-dev
@@ -15,7 +15,7 @@ services:
       SQL_PASSWORD: speed_pass
       SQL_PORT: 5432
       SQL_DB: speeddb
-
+    command: /usr/sbin/sshd -D
 #    entrypoint: python
 #    command: -m pytest
 
