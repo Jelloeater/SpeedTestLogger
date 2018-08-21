@@ -9,14 +9,13 @@ services:
       dockerfile: speed/Dockerfile
     working_dir: /speed
     entrypoint: python
-    command: -m pytest --cov
+    command: -m pytest --cov --verbose
     environment:
       SQL_HOSTNAME: speedsql
       SQL_USERNAME: speed_user
       SQL_PASSWORD: speed_pass
       SQL_PORT: 5432
       SQL_DB: speeddb
-
 
   webgui-dev:
     depends_on:
