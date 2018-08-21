@@ -6,7 +6,7 @@ class TestGetSpeedTest():
         assert speed_test.GetSpeedTest().doSpeedTest()
 
 
-class TestDBAccess():
-    def get_data_from_db(self):
-        t = speed_test.SendSpeedTest.getTable()
-        assert t is not None
+# class TestDBAccess():
+#     def test_get_data_from_db(self):
+#         t = speed_test.SendSpeedTest.getTable()
+#         assert t is not None
