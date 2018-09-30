@@ -45,9 +45,9 @@ complie exe:
     - win
     script:
     - dir
-    - pip install -r speed/requirments.txt
+    - pip install -r speed/requirements.txt
     - nuitka speed/speed_test.py --standalone --show-progress --show-memory --remove-output --python-flag=no_site  --assume-yes-for-downloads
-    - pip uninstall -r speed/requirments.txt
+    - pip uninstall -r speed/requirements.txt
     - dir
     artifacts:
       name: "%CI_JOB_NAME%-%CI_COMMIT_REF_NAME%"
