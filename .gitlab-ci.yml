@@ -44,9 +44,11 @@ complie exe:
     tags:
     - win
     script:
+    - pip install -f speed/requirments.txt -y
     - nuitka speed/speed_test.py --standalone --show-progress --show-memory --remove-output --python-flag=no_site  --assume-yes-for-downloads
+    - pip uninstall -f speed/requirments.txt -y
     artifacts:
-      name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+      name: "%CI_JOB_NAME%-%CI_COMMIT_REF_NAME%"
       untracked: true
 
 deploy production:
