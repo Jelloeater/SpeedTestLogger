@@ -1,16 +1,79 @@
+variables:
+  test_docker_tag: 'docker'
+# Only runs commands on production servers via runner shell, uses tag specified in GitLab GUI
+
 stages:
     - build
     - test
+    - clean
+    - deploy-prod
 
 setup docker build:
     stage: build
+    tags:
+    - $test_docker_tag
     script:
+    - ls -R
     - docker info
     - docker-compose -f docker-compose-test.yml build
+    - docker image ls
 
 run tests:
     stage: test
+    tags:
+    - $test_docker_tag
     script:
-    - docker-compose -f docker-compose-test.yml up speedtest-dev
-    after_script:
-    - docker-compose -f docker-compose-test.yml down
+    - docker-compose -f docker-compose-test.yml up -d speedsql-dev
+    - docker-compose -f docker-compose-test.yml run speedtest-dev
+
+clean up test env:
+    stage: clean
+    tags:
+    - $test_docker_tag
+    script:
+    - docker-compose -f docker-compose-test.yml down --rmi local --volumes --remove-orphans
+    when: always
+
+code complexity:
+    stage: clean
+    tags:
+    - $test_docker_tag
+    script:
+    - radon cc -a .
+
+deploy production:
+    stage: deploy-prod
+    tags:
+    - $test_docker_tag
+
+    environment:
+      name: production
+      on_stop: stop production
+    when: manual
+    allow_failure: false
+    only:
+      - master
+
+    script:
+      - ls -R
+      - docker image ls
+      - docker-compose -f docker-compose-deploy.yml down --rmi local --remove-orphans
+      - docker-compose -f docker-compose-deploy.yml rm -f
+      - docker-compose -f docker-compose-deploy.yml build
+      - docker tag autobot:latest autobot:$CI_COMMIT_SHA
+      - docker-compose -f docker-compose-deploy.yml up -d
+      - docker image ls
+
+stop production:
+  stage: deploy-prod
+  tags:
+   - $test_docker_tag
+  when: manual
+  only:
+    - master
+  environment:
+    name: production
+    action: stop
+
+  script:
+    - docker-compose -f docker-compose-deploy.yml down --rmi local --remove-orphans

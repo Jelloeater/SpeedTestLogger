@@ -3,7 +3,7 @@ FROM python:3.6
 ADD /web /web
 ADD /Database /web/Database
 RUN pip install -r /web/requirements.txt
-RUN ls
+RUN echo $(ls /app -R)
 #EXPOSE 5000
 ENTRYPOINT [ "python"]
 CMD ["./web/graph_web.py"]

@@ -14,7 +14,7 @@ To run speed test (w/ cron for example):
 
 * Python interperter for Dockerfile.debug 
   * Alpine Image = `/usr/local/bin/python`
-* See docker-compose.yml for production enviroment definition
+* See docker-compose-deploy.yml for production enviroment definition
 * See individual Dockerfile's for microservice requirments
 * See .gitlab-ci.yml for test enviroment
 

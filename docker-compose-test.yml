@@ -9,7 +9,7 @@ services:
       dockerfile: speed/Dockerfile
     working_dir: /speed
     entrypoint: python
-    command: -m pytest --cov --verbose
+    command: -m pytest --cov -v -s
     environment:
       SQL_HOSTNAME: speedsql
       SQL_USERNAME: speed_user
