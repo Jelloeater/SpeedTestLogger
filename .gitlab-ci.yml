@@ -39,6 +39,16 @@ code complexity:
     script:
     - radon cc -a .
 
+complie exe:
+    stage: clean
+    tags:
+    - win
+    script:
+    - nuitka speed/speed_test.py --standalone --show-progress --show-memory --remove-output --python-flag=no_site  --assume-yes-for-downloads
+    artifacts:
+      name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
+      untracked: true
+
 deploy production:
     stage: deploy-prod
     tags:
