@@ -1,7 +1,10 @@
 version: '3'
 services:
   speedtest-dev:
+    networks:
+      - speed-test
     restart: on-failure
+    image: speedtest-dev
     depends_on:
       - speedsql-dev
     build:
@@ -18,6 +21,8 @@ services:
       SQL_DB: speeddb
 
   webgui-dev:
+    networks:
+      - speed-test
     depends_on:
       - speedsql-dev
     build:
@@ -33,6 +38,8 @@ services:
      - "5001:5000"
 
   speedsql-dev:
+    networks:
+      - speed-test
     image: postgres
     restart: always
     environment:
@@ -42,5 +49,27 @@ services:
     volumes:
       - speed-data-vol-dev:/var/lib/postgresql/data
 
+  speedtest-dev-coverage:
+    networks:
+      - speed-test
+    depends_on:
+      - speedsql-dev
+    image: speedtest-dev
+    working_dir: /speed
+    entrypoint: python
+    command: -m pytest --cov-report:/coverage/
+    environment:
+      SQL_HOSTNAME: speedsql
+      SQL_USERNAME: speed_user
+      SQL_PASSWORD: speed_pass
+      SQL_PORT: 5432
+      SQL_DB: speeddb
+    volumes:
+      - speed-coverage-report:/coverage
+
 volumes:
   speed-data-vol-dev:
+  speed-coverage-report:
+
+networks:
+  speed-test:

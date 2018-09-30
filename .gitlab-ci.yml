@@ -4,6 +4,9 @@ stages:
     - build
     - test
     - clean
+    - exe_1
+    - exe_2
+    - exe_3
     - deploy-prod
 
 setup docker build:
@@ -39,19 +42,34 @@ code complexity:
     script:
     - radon cc -a .
 
+install py modules:
+    stage: exe_1
+    tags:
+    - win
+    script:
+    - pip install -r speed/requirements.txt
+    artifacts:
+      name: "%CI_JOB_NAME%-%CI_COMMIT_REF_NAME%"
+      untracked: true
+
 complie exe:
-    stage: clean
+    stage: exe_2
     tags:
     - win
     script:
     - dir
-    - pip install -r speed/requirements.txt
-    - nuitka speed/speed_test.py --standalone --show-progress --show-memory --remove-output --python-flag=no_site  --assume-yes-for-downloads
-    - pip uninstall -r speed/requirements.txt
+    - python -m nuitka speed/speed_test.py --follow-imports --standalone --show-progress --remove-output --python-flag=no_site  --assume-yes-for-downloads
     - dir
     artifacts:
       name: "%CI_JOB_NAME%-%CI_COMMIT_REF_NAME%"
-      untracked: true
+      untracked: true # Adds all untracked files
+
+remove py modules:
+    stage: exe_3
+    tags:
+    - win
+    script:
+    - pip uninstall -r speed/requirements.txt
 
 deploy production:
     stage: deploy-prod

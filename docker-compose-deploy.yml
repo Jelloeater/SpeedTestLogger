@@ -7,8 +7,9 @@ services:
     build:
       context: .
       dockerfile: speed/Dockerfile
+    working_dir: /speed
     entrypoint: python
-    command: -m pytest --cov -v -s
+    command: /speed/speed_test.py -g --debug
     environment:
       SQL_HOSTNAME: speedsql
       SQL_USERNAME: speed_user

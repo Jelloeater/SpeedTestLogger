@@ -4,5 +4,3 @@ ADD /speed /speed
 ADD /Database /speed/Database
 RUN pip install -r /speed/requirements.txt
 RUN echo $(ls /app -R)
-#ENTRYPOINT [ "python"]
-#CMD ["/speed/speed_test.py","-g", "--debug"]
