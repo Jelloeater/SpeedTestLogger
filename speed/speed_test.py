@@ -1,6 +1,5 @@
 import argparse
 import logging
-import os
 
 import speedtest
 from prettytable import PrettyTable
@@ -9,8 +8,6 @@ from Database import databasehelper
 
 __author__ = 'jesse'
 
-logging.info('ENVARS')
-logging.info(str(os.environ))
 
 def main():
     LOG_FILENAME = 'error.log'
