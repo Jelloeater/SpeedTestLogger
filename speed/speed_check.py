@@ -1,3 +1,7 @@
+from prometheus_client import start_http_server, Gauge
+
+start_http_server(8000)
+
 import argparse
 import logging
 
@@ -9,52 +13,68 @@ from Database import databasehelper
 __author__ = 'jesse'
 
 
-def main():
-    LOG_FILENAME = 'error.log'
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--debug",
-                        action="store_true",
-                        help="Debug Mode Logging")
+class SpeedTest:
+    MAIN_LOOP_TIME = Gauge('main_loop_time', 'Time to run through main logic loop')
 
-    mode = parser.add_mutually_exclusive_group(required=True)
-    mode.add_argument('-g', "--getspeed",
-                      action="store_true",
-                      help="Test and Log Speed")
+    @MAIN_LOOP_TIME.time()
+    def main(self):
+        LOG_FILENAME = 'error.log'
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--debug",
+                            action="store_true",
+                            help="Debug Mode Logging")
 
-    mode.add_argument('-s', "--sendspeed",
-                      action="store_true",
-                      help="Send Speed Report")
+        mode = parser.add_mutually_exclusive_group(required=True)
+        mode.add_argument('-g', "--getspeed",
+                          action="store_true",
+                          help="Test and Log Speed")
 
-    sendspeed = parser.add_argument_group('E-mail Config')
-    sendspeed.add_argument("-from_email")
-    sendspeed.add_argument("-to_email")
-    sendspeed.add_argument("-smtp_server")
+        mode.add_argument('-s', "--sendspeed",
+                          action="store_true",
+                          help="Send Speed Report")
 
-    args = parser.parse_args()
-    if args.debug:
-        logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
-                                   "(%(filename)s:%(lineno)s)",
-                            level=logging.DEBUG)
-        logging.debug('Debug Mode Enabled')
-    else:
-        logging.basicConfig(filename=LOG_FILENAME,
-                            format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
-                                   "(%(filename)s:%(lineno)s)",
-                            level=logging.WARNING)
+        sendspeed = parser.add_argument_group('E-mail Config')
+        sendspeed.add_argument("-from_email")
+        sendspeed.add_argument("-to_email")
+        sendspeed.add_argument("-smtp_server")
 
-    if args.getspeed:
+        args = parser.parse_args()
+        if args.debug:
+            logging.basicConfig(format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
+                                       "(%(filename)s:%(lineno)s)",
+                                level=logging.DEBUG)
+            logging.debug('Debug Mode Enabled')
+        else:
+            logging.basicConfig(filename=LOG_FILENAME,
+                                format="[%(asctime)s] [%(levelname)8s] --- %(message)s "
+                                       "(%(filename)s:%(lineno)s)",
+                                level=logging.WARNING)
+
+        if args.getspeed:
+            self.get_speed()
+
+        if args.sendspeed:
+            self.send_speed(args)
+
+        if args.debug:
+            self.debug()
+
+    @staticmethod
+    def get_speed():
         databasehelper.Setup.setup_sql_environment()
         speed_data = GetSpeedTest().doSpeedTest()
         databasehelper.SpeedTestData.put_data(speed_data)
 
-    if args.sendspeed:
+    @staticmethod
+    def send_speed(arg_in):
         # SendSpeedTest.sendEmail(None,None,None,True) # DEBUG TEST
-        if args.from_email and args.to_email and args.smtp_server:
-            SendSpeedTest.sendEmail(args.from_email, args.to_email, args.smtp_server, args.debug)
+        if arg_in.from_email and arg_in.to_email and arg_in.smtp_server:
+            SendSpeedTest.sendEmail(arg_in.from_email, arg_in.to_email, arg_in.smtp_server, arg_in.debug)
         else:
             print('Missing all arguments')
 
-    if args.debug:
+    @staticmethod
+    def debug():
         t = SendSpeedTest.getTable()
         logging.debug(t)
 
@@ -132,4 +152,4 @@ class GetSpeedTest:
 
 
 if __name__ == "__main__":
-    main()
+    SpeedTest().main()

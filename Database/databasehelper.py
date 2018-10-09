@@ -1,7 +1,9 @@
 import datetime
 import logging
 import os
+import platform
 
+from prometheus_client import Counter
 from sqlalchemy import Column, TIMESTAMP, FLOAT, INTEGER, inspect
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -12,18 +14,28 @@ __author__ = 'jesse'
 
 # Global ORM BASE, used by module
 BASE = declarative_base()
+SQL_LITE_DB_NAME = 'Speed' + '.db'
+SQL_LITE_ENGINE_URL = 'sqlite:///' + SQL_LITE_DB_NAME
 
+
+DB_ENGINE_ACCESS_COUNTER = Counter('db_engine_access_counter', 'Number of DB Engine Calls')
 
 def get_engine():
-    # sqlite:////absolute/path/to/file.db
-    SQL_HOSTNAME = os.environ['SQL_HOSTNAME']
-    SQL_USERNAME = os.environ['SQL_USERNAME']
-    SQL_PASSWORD = os.environ['SQL_PASSWORD']
-    SQL_PORT = os.environ['SQL_PORT']
-    SQL_DB = os.environ['SQL_DB']
-    engine_url = 'postgresql://'+SQL_USERNAME+':'+SQL_PASSWORD+'@' + SQL_HOSTNAME + ':'+SQL_PORT+'/'+SQL_DB
+    """Returns SQL engine depending on OS"""
+    if platform.system() == 'Windows':
+        engine_url = SQL_LITE_ENGINE_URL
+    else:
+        SQL_HOSTNAME = os.environ['SQL_HOSTNAME']
+        SQL_USERNAME = os.environ['SQL_USERNAME']
+        SQL_PASSWORD = os.environ['SQL_PASSWORD']
+        SQL_PORT = os.environ['SQL_PORT']
+        SQL_DB = os.environ['SQL_DB']
+        engine_url = 'postgresql://' + SQL_USERNAME + ':' + SQL_PASSWORD + '@' + SQL_HOSTNAME + ':' + SQL_PORT + '/' + SQL_DB
+
     engine = create_engine(engine_url)
+    DB_ENGINE_ACCESS_COUNTER.inc()
     return engine
+
 
 
 def get_session():

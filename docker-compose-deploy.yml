@@ -9,7 +9,7 @@ services:
       dockerfile: speed/Dockerfile
     working_dir: /speed
     entrypoint: python
-    command: /speed/speed_test.py -g --debug
+    command: /speed/speed_check.py -g --debug
     environment:
       SQL_HOSTNAME: speedsql
       SQL_USERNAME: speed_user

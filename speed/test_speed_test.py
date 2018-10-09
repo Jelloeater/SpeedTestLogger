@@ -1,14 +1,14 @@
 import logging
 import os
 
-import speed_test
+import speed_check
 
 
 class TestGetSpeedTest():
     def test_doSpeedTest(self):
         logging.info('ENVARS')
         logging.info(str(os.environ))
-        assert speed_test.GetSpeedTest().doSpeedTest()
+        assert speed_check.GetSpeedTest().doSpeedTest()
 
 
 # class TestDBAccess():
