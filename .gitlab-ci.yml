@@ -69,6 +69,7 @@ deploy production:
     script:
       - ls -R
       - docker image ls
+      - echo $CI_COMMIT_REF_NAME >> /speed/version.txt
       - docker-compose -f docker-compose-deploy.yml down --rmi local --remove-orphans
       - docker-compose -f docker-compose-deploy.yml rm -f
       - docker-compose -f docker-compose-deploy.yml build
